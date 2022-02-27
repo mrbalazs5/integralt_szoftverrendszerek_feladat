@@ -44,7 +44,7 @@ services:
     build:
       dockerfile: Docker/frontend/Dockerfile
       context: ./
-    command: npm run dev
+    command: yarn dev
     networks:
       - chat_app
     volumes:
@@ -52,9 +52,6 @@ services:
       - /frontend/node_modules
     ports:
       - "3000:3000"
-    depends_on:
-      mysql:
-        condition: service_healthy
     deploy:
       restart_policy:
         condition: on-failure

@@ -5,12 +5,6 @@ WORKDIR /frontend
 
 COPY frontend /frontend/
 
-RUN npm install
-
-RUN chown -R node.node /frontend
-
-USER node
-
-RUN chmod -R 777 /frontend
+RUN yarn install
 
 EXPOSE 3000

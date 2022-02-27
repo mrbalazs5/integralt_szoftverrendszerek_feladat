@@ -39,12 +39,32 @@ services:
         condition: on-failure
         max_attempts: 3
 
+  chat_app_backend:
+    container_name: chat_app_backend
+    depends_on:
+      mysql:
+        condition: service_healthy
+    build:
+      context: ./
+      dockerfile: Docker/backend/Dockerfile
+    command: java -jar /backend-0.0.1.jar
+    ports:
+    - "9000:9000"
+    networks:
+      - chat_app
+    deploy:
+      restart_policy:
+        condition: on-failure
+        max_attempts: 3
+
   chat_app_frontend:
     container_name: chat_app_frontend
     build:
       dockerfile: Docker/frontend/Dockerfile
       context: ./
     command: yarn dev
+    depends_on:
+      - chat_app_backend
     networks:
       - chat_app
     volumes:

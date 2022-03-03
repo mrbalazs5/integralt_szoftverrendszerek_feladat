@@ -10,7 +10,8 @@
   },
   "dependencies": {
     "vue": "^3.2.31",
-    "vue-router": "^4.0.12"
+    "vue-router": "^4.0.12",
+    "vue-socket.io": "^3.0.10"
   },
   "devDependencies": {
     "@rushstack/eslint-patch": "^1.1.0",

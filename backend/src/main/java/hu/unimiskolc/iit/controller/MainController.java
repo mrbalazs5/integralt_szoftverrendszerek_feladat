@@ -13,6 +13,5 @@ public class MainController {
 		mav.setViewName("index.html");
 		return mav;
 	}
-	
 
 }

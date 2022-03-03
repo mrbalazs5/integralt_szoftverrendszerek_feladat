@@ -16,3 +16,8 @@ export default defineConfig({
       host: true
   }
 })
+module.exports = {
+  devServer: {
+    proxy: 'http://localhost:9000/'
+  }
+}

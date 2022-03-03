@@ -47,11 +47,14 @@ services:
     build:
       context: ./
       dockerfile: Docker/backend/Dockerfile
-    command: java -jar /backend-0.0.1.jar
+    command: mvn spring-boot:run
     ports:
-    - "9000:9000"
+      - "9000:9000"
     networks:
       - chat_app
+    volumes:
+      - ./backend:/backend
+      - /backend/target
     deploy:
       restart_policy:
         condition: on-failure

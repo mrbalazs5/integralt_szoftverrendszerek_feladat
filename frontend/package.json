@@ -9,9 +9,12 @@
     "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --fix --ignore-path .gitignore"
   },
   "dependencies": {
+    "axios": "^0.26.0",
     "vue": "^3.2.31",
     "vue-router": "^4.0.12",
-    "vue-socket.io": "^3.0.10"
+    "vue-socket.io": "^3.0.10",
+    "vuex": "^4.0.2",
+    "vuex-persistedstate": "^4.1.0"
   },
   "devDependencies": {
     "@rushstack/eslint-patch": "^1.1.0",

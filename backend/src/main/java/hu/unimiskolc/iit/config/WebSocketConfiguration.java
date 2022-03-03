@@ -21,7 +21,7 @@ public class WebSocketConfiguration implements WebSocketConfigurer {
 			@Override
 			public void addCorsMappings(CorsRegistry registry) {
 				registry.addMapping("/**").allowedMethods("GET", "POST", "PUT", "DELETE").allowedHeaders("*")
-						.allowedOrigins("*");
+						.allowedOrigins("http://localhost:3000");
 			}
 		};
 	}
@@ -34,6 +34,6 @@ public class WebSocketConfiguration implements WebSocketConfigurer {
 	@Override
 	public void registerWebSocketHandlers(WebSocketHandlerRegistry webSocketHandlerRegistry) {
 		webSocketHandlerRegistry.addHandler(getChatWebSocketHandler(), ENDPOINT)
-				.setAllowedOrigins("*");
+				.setAllowedOrigins("http://localhost:3000");
 	}
 }

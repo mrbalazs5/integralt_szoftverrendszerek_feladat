@@ -11,8 +11,7 @@ const vueSocket = new VueSocketIO({
         store,
         actionPrefix: 'SOCKET_',
         mutationPrefix: 'SOCKET_'
-    },
-    options: { path: "/api/socket" } //Optional options
+    }
 });
 
 createApp(App).use(router).use(store).use(vueSocket).mount('#app');

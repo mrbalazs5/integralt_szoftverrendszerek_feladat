@@ -11,7 +11,7 @@ import org.springframework.web.socket.config.annotation.WebSocketHandlerRegistry
 @EnableWebSocket
 public class WebSocketConfiguration implements WebSocketConfigurer {
 
-	private final static String ENDPOINT = "/api/socket";
+	private final static String ENDPOINT = "/api/socket/";
 
 	@Bean
 	public WebSocketHandler getChatWebSocketHandler(){

@@ -13,14 +13,6 @@ export default defineConfig({
     }
   },
   server: {
-      host: true,
-      proxy: {
-          '/api/socket/': {
-              target: 'http://localhost:9000',
-              ws: true,
-              changeOrigin: true,
-              logLevel: 'debug'
-          }
-      }
+      host: true
   }
 })

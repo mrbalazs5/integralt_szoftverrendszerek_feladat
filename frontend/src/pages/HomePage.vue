@@ -1,29 +1,45 @@
 <template>
   <div class="HomePage page">
     Welcome
+    <button v-on:click="this.sendMessage()">Click me</button>
   </div>
 </template>
 
 <script lang="ts">
+    type DataType = {
+        socket: WebSocket | null
+    }
+
     export default {
         name: 'HomePage',
-        sockets: {
-            connect: function () {
-                console.log('socket connected')
-            },
-            customEmit: function (data) {
-                console.log('this method was fired by the socket server. eg: io.emit("customEmit", data)')
+        data(): DataType {
+            return {
+                socket: null
             }
         },
         created() {
-            this.initConnection()
+            this.initConnection();
         },
         methods: {
             initConnection() {
-                this.$socket.emit('emit_method', {
-                    user: "test",
-                    message: "test text"
-                })
+                this.socket = new WebSocket("ws://localhost:9000/api/socket/");
+
+                this.socket.onopen = function(event: Event) {
+                    console.log('Connected.');
+                };
+
+                this.socket.onmessage = function(event: MessageEvent) {
+                    const data = event.data;
+
+                    console.log('Message: ', data);
+                };
+
+                this.socket.onerror = function(err: ErrorEvent) {
+                    console.error('WebSocket error', err);
+                };
+            },
+            sendMessage() {
+                this.socket.send("Hello from client!");
             }
         },
     }

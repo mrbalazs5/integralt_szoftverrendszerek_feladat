@@ -1,7 +1,6 @@
 <template>
   <div class="HomePage page">
     Welcome
-    <button v-on:click="this.sendMessage()">Click me</button>
   </div>
 </template>
 

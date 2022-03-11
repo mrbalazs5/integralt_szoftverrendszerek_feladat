@@ -1,5 +1,6 @@
 <template>
   <div id="registrationForm">
+    <h1>Registration page</h1>
     <form>
       <div>
         <label for="name">Username: </label>

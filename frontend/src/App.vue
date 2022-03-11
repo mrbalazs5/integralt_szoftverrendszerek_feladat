@@ -5,10 +5,10 @@
 <template>
   
    <div id="nav">
-      <RouterLink to="/">Home</RouterLink>
-      <RouterLink to="/about">About</RouterLink>
-      <RouterLink to="/login">Login</RouterLink>
-      <RouterLink to="/regist">Regist</RouterLink>
+      <RouterLink to="/">Home</RouterLink> |
+      <RouterLink to="/about">About</RouterLink> |
+      <RouterLink to="/login">Login</RouterLink> |
+      <RouterLink to="/regist">Registration</RouterLink>
 
   <main>
     <RouterView />

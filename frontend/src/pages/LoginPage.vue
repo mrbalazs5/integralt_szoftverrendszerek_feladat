@@ -2,7 +2,9 @@
     <div id="login">
         <form id="login-form" class="login-form" @submit.prevent="processForm(loginData)">
             <div>
+              <p>
                 <img src="../img/c(h)at.png" alt="Avatar" class="avatar">
+              </p>
             </div>
             <div class="form-group">
                 <h1>Login</h1>      

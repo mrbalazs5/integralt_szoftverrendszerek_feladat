@@ -7,14 +7,32 @@
 
             <div class="form-group">
                 <div class="input-wrapper">
-                    <input type="text" name="username" placeholder="Felhasználónév" />
+                    <input
+                        v-model="loginData.email"
+                        type="text"
+                        name="username"
+                        placeholder="Felhasználónév"
+                    />
                 </div>
                 <div class="input-wrapper">
-                    <input type="password" name="password" placeholder="Jelszó" />
+                    <input
+                        v-model="loginData.password"
+                        type="password"
+                        name="password"
+                        placeholder="Jelszó"
+                    />
                 </div>
                 <div class="input-wrapper">
                     <input type="submit" value="Engedj be!">
                 </div>
+            </div>
+
+            <div v-if="errors.length > 0" class="errors">
+                <ul>
+                    <li v-for="(error, k) in errors" :key="k">
+                        {{ error }}
+                    </li>
+                </ul>
             </div>
         </form>
 
@@ -23,8 +41,42 @@
 </template>
 
 <script lang="ts">
+    import axios from "axios";
+    import { mapActions } from "vuex";
+
     export default {
-        name: 'LoginPage'
+        name: 'LoginPage',
+        data() {
+            return {
+                loginData: {
+                    email: '',
+                    password: ''
+                },
+                errors: []
+            }
+        },
+        methods: {
+            ...mapActions(["login"]),
+            processForm: function(loginData) {
+                axios
+                    .post(`http://localhost:9000/api/login`, {
+                        email: loginData.email,
+                        password: loginData.password
+                    })
+                    .then(response => {
+                        if(response.status == 200) {
+                            const { token, user } = response.data;
+
+                            this.login({token, user});
+                            this.$router.push('/');
+                        }
+                    })
+                    .catch(e => {
+                        console.log(e);
+                        this.errors = e?.response?.data?.errors || [];
+                    });
+            }
+        }
     }
 </script>
 
@@ -70,7 +122,7 @@
         color: white;
     }
     
-    img {
+    .avatar {
         max-width: 150px;
         border-radius: 50%;
     }

@@ -43,18 +43,13 @@
         transition: 0.5s;
     }
 
-    .input-wrapper {
-      display: flex;
-      flex-direction: column;
-      justify-content: flex-start;
-    }
-
     option {
         padding: 12px;
         margin: 8px 0;
     }
 
     label {
+        display: block;
         width: 100%;
         margin-top: 6px;
         font-weight: bold;

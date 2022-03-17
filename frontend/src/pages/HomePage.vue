@@ -1,6 +1,10 @@
 <template>
   <div class="HomePage page">
-    Welcome
+    <div class="welcome-content">
+      <h1>Üdvözöllek!</h1>
+      <p>Ahhoz, hogy chatelj és játszhass jelentkezz be!</p>
+      <RouterLink to="/login">Bejelentkezés</RouterLink>
+    </div>
   </div>
 </template>
 
@@ -43,3 +47,10 @@
         },
     }
 </script>
+
+<style scoped>
+  .welcome-content p {
+    padding: 0;
+    margin: 0;
+  }
+</style>

@@ -8,7 +8,7 @@
             <div class="form-group">
                 <div class="input-wrapper">
                     <input
-                        v-model="loginData.email"
+                        v-model="loginData.username"
                         type="text"
                         name="username"
                         placeholder="Felhasználónév"
@@ -43,13 +43,15 @@
 <script lang="ts">
     import axios from "axios";
     import { mapActions } from "vuex";
+    import type { UserType } from "../types";
+
 
     export default {
         name: 'LoginPage',
         data() {
             return {
                 loginData: {
-                    email: '',
+                    username: '',
                     password: ''
                 },
                 errors: []
@@ -59,20 +61,26 @@
             ...mapActions(["login"]),
             processForm: function(loginData) {
                 axios
-                    .post(`http://localhost:9000/api/login`, {
-                        email: loginData.email,
+                    .post("http://localhost:9000/api/auth/login", {
+                        username: loginData.username,
                         password: loginData.password
                     })
                     .then(response => {
-                        if(response.status == 200) {
-                            const { token, user } = response.data;
+                        const { id, username, email, accessToken } = response.data;
 
-                            this.login({token, user});
-                            this.$router.push('/');
-                        }
+                        const user: UserType | null = id ? {
+                            id,
+                            username,
+                            email
+                        } : null;
+
+                        this.login({accessToken, user});
+
+                        this.$router.push({path: '/'});
                     })
                     .catch(e => {
-                        console.log(e);
+                        console.error(e);
+
                         this.errors = e?.response?.data?.errors || [];
                     });
             }
@@ -130,5 +138,12 @@
     .login-form {
         max-width: 300px;
         margin: 0 auto;
+    }
+
+    .errors ul{
+        list-style: none;
+        color: red;
+        text-align: center;
+        padding: 0;
     }
 </style>

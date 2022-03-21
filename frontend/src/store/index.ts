@@ -1,6 +1,7 @@
 import { createStore } from 'vuex';
 import Axios from 'axios';
 import createPersistedState from 'vuex-persistedstate';
+import type { UserType } from "@/types";
 
 const getDefaultState = () => {
     return {
@@ -14,10 +15,10 @@ export default createStore({
     plugins: [createPersistedState()],
     state: getDefaultState(),
     getters: {
-        isLoggedIn: state => {
+        isLoggedIn: (state): boolean => {
             return !!state.token;
         },
-        getUser: state => {
+        getUser: (state): UserType => {
             return state.user;
         }
     },
@@ -25,7 +26,7 @@ export default createStore({
         SET_TOKEN: (state, token) => {
             state.token = token;
         },
-        SET_USER: (state, user) => {
+        SET_USER: (state, user: UserType) => {
             state.user = user;
         },
         RESET: state => {
@@ -33,13 +34,12 @@ export default createStore({
         }
     },
     actions: {
-        login: ({ commit, dispatch }, {token, user}) => {
-            commit('SET_TOKEN', token);
+        login: ({commit, dispatch}, {accessToken, user}) => {
+            commit('SET_TOKEN', accessToken);
             commit('SET_USER', user);
             dispatch;
 
-            // set auth header
-            Axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+            Axios.defaults.headers.common['Authorization'] = `Bearer ${accessToken}`;
         },
         logout: ({ commit }) => {
             commit('RESET', '');

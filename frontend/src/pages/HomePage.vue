@@ -1,20 +1,38 @@
 <template>
   <div class="HomePage page">
-    Welcome
+    <div v-if="this.isLoggedIn" class="chat-content">
+      <Chat />
+    </div>
+
+
+    <div v-if="!this.isLoggedIn" class="welcome-content">
+      <h1>Üdvözöllek!</h1>
+      <p>Ahhoz, hogy chatelj és játszhass jelentkezz be!</p>
+      <RouterLink to="/login">Bejelentkezés</RouterLink>
+    </div>
   </div>
 </template>
 
 <script lang="ts">
+    import { mapGetters } from "vuex";
+    import Chat from '../components/Chat.vue'
+
     type DataType = {
         socket: WebSocket | null
     }
 
     export default {
         name: 'HomePage',
+        components: {
+            Chat
+        },
         data(): DataType {
             return {
                 socket: null
             }
+        },
+        computed: {
+            ...mapGetters(["isLoggedIn"])
         },
         created() {
             this.initConnection();
@@ -43,3 +61,10 @@
         },
     }
 </script>
+
+<style scoped>
+  .welcome-content p {
+    padding: 0;
+    margin: 0;
+  }
+</style>

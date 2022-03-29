@@ -2,31 +2,74 @@
   <div class="RegistrationPage page">
     <h1>Regisztráció</h1>
 
-    <form id="registration-form" class="registration-form">
+    <form id="registration-form" class="registration-form" @submit.prevent="processForm(registData)">
       <div class="input-wrapper">
         <label for="name">Felhasználónév</label>
-        <input name="name" placeholder="Felhasználónév" required="required">
+        <input name="name" placeholder="Felhasználónév" required="required" v-model="registData.username">
       </div>
 
       <div class="input-wrapper">
         <label for="email">E-mail cím</label>
-        <input type="email" name="email" placeholder="E-mail cím" required="required">
+        <input type="email" name="email" placeholder="E-mail cím" required="required" v-model="registData.email">
       </div>
 
       <div class="input-wrapper">
         <label for="password">Jelszó</label>
-        <input name="password"  placeholder="Jelszó" type="password" required="required">
+        <input name="password"  placeholder="Jelszó" type="password" required="required" minlength="8" v-model="registData.password">
       </div>
 
       <input type="submit" value="Regisztrálok!">
+
+      <div v-if="errors.length > 0" class="errors">
+                <ul>
+                    <li v-for="(error, k) in errors" :key="k">
+                        {{ error }}
+                    </li>
+                </ul>
+     </div>
+
     </form>
   </div>
 
 </template>
 
 <script lang="ts">
+    import axios from "axios";
+    import { mapActions } from "vuex";
+
     export default {
-        name: 'RegistrationPage'
+        name: 'RegistrationPage',
+        data() {
+            return {
+                registData: {
+                    username: '',
+                    email:'',
+                    password: ''
+                },
+                errors: []
+            }
+        },
+        methods: {
+            ...mapActions(["/registration"]),
+            processForm: function(registData) {
+                axios
+                    .post("http://localhost:9000/api/auth/registration", {
+                        username: registData.username,
+                        email: registData.email,
+                        password: registData.password
+                    })
+                    .then(response => {
+                        console.log(response);
+                        alert('Yay! :D')
+                        this.$router.push({path: '/'});
+                    })
+                    .catch(e => {
+                        console.error(e);
+
+                        this.errors = e?.response?.data?.errors || [];
+                    });
+            }
+        }
     }
 </script>
 

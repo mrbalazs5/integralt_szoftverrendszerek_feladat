@@ -4,6 +4,7 @@
         <RouterLink to="/about">Rólunk</RouterLink>
         <RouterLink v-if="!this.isLoggedIn" to="/login">Bejelentkezés</RouterLink>
         <RouterLink v-if="!this.isLoggedIn" to="/registration">Regisztráció</RouterLink>
+        <RouterLink v-if="this.isLoggedIn" to="/chat">Chat</RouterLink>
         <a href="#" v-if="this.isLoggedIn" v-on:click="this.logout()">Logout</a>
     </div>
 

@@ -1,6 +1,6 @@
 FROM openjdk:8-jdk-alpine
 
-ARG MAVEN_VERSION=3.8.4
+ARG MAVEN_VERSION=3.8.5
 ARG USER_HOME_DIR="/root"
 ARG BASE_URL=https://apache.osuosl.org/maven/maven-3/${MAVEN_VERSION}/binaries
 

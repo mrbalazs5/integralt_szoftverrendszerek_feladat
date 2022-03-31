@@ -59,6 +59,10 @@ services:
       restart_policy:
         condition: on-failure
         max_attempts: 3
+    healthcheck:
+      test: ["CMD", "curl", "-Is", "localhost:9000"]
+      timeout: 20s
+      retries: 10
 
   chat_app_frontend:
     container_name: chat_app_frontend
@@ -67,7 +71,8 @@ services:
       context: ./
     command: yarn dev
     depends_on:
-      - chat_app_backend
+      chat_app_backend:
+        condition: service_healthy
     networks:
       - chat_app
     volumes:

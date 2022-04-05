@@ -35,7 +35,9 @@
             ...mapGetters(["isLoggedIn"])
         },
         created() {
-            this.initConnection();
+            if(this.isLoggedIn) {
+                this.initConnection();
+            }
         },
         methods: {
             initConnection() {

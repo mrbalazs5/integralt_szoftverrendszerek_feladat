@@ -1,7 +1,8 @@
 package hu.unimiskolc.iit.handler;
 
+import hu.unimiskolc.iit.handler.core.Message;
 import org.springframework.web.socket.CloseStatus;
-import org.springframework.web.socket.TextMessage;
+import org.springframework.web.socket.WebSocketMessage;
 import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
 
@@ -18,8 +19,8 @@ public class ChatWebSocketHandler extends TextWebSocketHandler {
     }
 
     @Override
-    public void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
-        for(WebSocketSession webSocketSession : webSocketSessions){
+    public void handleTextMessage(WebSocketSession session, WebSocketMessage<Message> message) throws Exception {
+        for(WebSocketSession webSocketSession : webSocketSessions) {
             webSocketSession.sendMessage(message);
         }
     }

@@ -18,7 +18,7 @@ export default createStore({
         isLoggedIn: (state): boolean => {
             return !!state.token;
         },
-        getUser: (state): UserType => {
+        currentUser: (state): UserType => {
             return state.user;
         }
     },

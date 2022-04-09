@@ -7,6 +7,7 @@
         </div>
 
         <input id="message-input" name="message-input" class="message-input" type="text" >
+      <button v-on:click="this.sendMessage('Szia')">Test</button>
     </div>
 </template>
 

@@ -97,7 +97,6 @@
         box-sizing: border-box;
         border-radius: 4px;
         border: 2px solid purple;
-        alignment: center;
         transition: 0.5s;
     }
 
@@ -109,7 +108,6 @@
     label {
         padding: 12px 12px 12px 0;
         display: inline-block;
-        alignment: center;
         width: 50%;
         margin-top: 6px;
         font-weight: bold;

@@ -1,13 +1,20 @@
 <template>
     <div class="Chat">
         <div class="messages">
-            <div v-for="(message, k) in this.messages" :key="k">
-               Üzenet: {{ message.text }}
-               Küldő: {{ message.senderName }}
-               Időpont: {{ message.timeStamp }}
-            </div>
-
-
+          <div>
+              <table>
+                    <tr>
+                      <th>Üzenet</th>
+                      <th>Küldő</th>
+                      <th>Időpont</th>
+                    </tr>
+                    <tr v-for="(message, k) in this.messages" :key="k">
+                      <td>{{ message.text }}</td>
+                      <td>{{ message.senderName }}</td>
+                      <td>{{ message.timeStamp }}</td>
+                    </tr>
+                  </table>
+                </div>
         </div>
         <input id="message-input" v-model="newMessage" name="message-input" class="message-input" type="text" >
       <button id="send_button" v-on:click="sendMessage(newMessage)">✉️</button>
@@ -119,4 +126,12 @@
         background-color: #45a049;
         color: white;
     }
+
+    .messages table {
+      margin-left: auto;
+      margin-right: auto;
+      align-content: center;
+      
+    }
+
 </style>

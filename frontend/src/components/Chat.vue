@@ -2,8 +2,12 @@
     <div class="Chat">
         <div class="messages">
             <div v-for="(message, k) in this.messages" :key="k">
-                {{ message.text }}
+               Üzenet: {{ message.text }}
+               Küldő: {{ message.senderName }}
+               Időpont: {{ message.timeStamp }}
             </div>
+
+
         </div>
         <input id="message-input" v-model="newMessage" name="message-input" class="message-input" type="text" >
       <button id="send_button" v-on:click="sendMessage(newMessage)">✉️</button>
@@ -12,16 +16,19 @@
 
 <script lang="ts">
     import { mapGetters } from "vuex";
+    import type { UserType } from "@/types";
  
     type MessageType = {
         text: string,
         senderId: number,
         senderName: string,
+        timeStamp: string
     };
 
     type DataType = {
         socket: WebSocket | null,
         messages: MessageType[]
+        users: UserType[]
     }
   
     export default {
@@ -29,7 +36,7 @@
         data(): DataType {
             return {               
                 socket: null,
-                messages: [],
+                messages: []
             }        
         },
         created() {
@@ -63,11 +70,12 @@
             },
             sendMessage(text: string) {
                 const user = this.currentUser;
-
+                const timeStamp = new Date().toLocaleString();
                 const message: MessageType = {
                     text,
                     senderId: user.id,
-                    senderName: user.username
+                    senderName: user.username,
+                    timeStamp: timeStamp
                 };
 
                 this.socket.send(JSON.stringify(message));

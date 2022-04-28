@@ -152,6 +152,11 @@
         color: white;
     }
 
+    .messages {
+      height: 400px;
+      overflow-y: auto;
+    }
+
     .message {
       color: white;
       margin-bottom: 10px;

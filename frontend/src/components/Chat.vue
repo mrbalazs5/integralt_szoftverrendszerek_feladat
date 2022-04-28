@@ -1,23 +1,26 @@
 <template>
     <div class="Chat">
         <div class="messages">
-          <div>
-              <table>
-                    <tr>
-                      <th>Üzenet</th>
-                      <th>Küldő</th>
-                      <th>Időpont</th>
-                    </tr>
-                    <tr v-for="(message, k) in this.messages" :key="k">
-                      <td>{{ message.text }}</td>
-                      <td>{{ message.senderName }}</td>
-                      <td>{{ message.timeStamp }}</td>
-                    </tr>
-                  </table>
-                </div>
+          <div
+              class="message"
+              v-bind:class="{'own-message': message.senderId === this.currentUser.id}"
+              v-for="(message, k) in this.messages"
+              :key="k"
+          >
+            <div class="message-text">{{ message.text }}</div>
+
+            <div class="message-meta">
+              <span class="sender">{{ message.senderName }}</span>
+
+              <span class="time">{{ message.timeStamp }}</span>
+            </div>
+          </div>
         </div>
-        <input id="message-input" v-model="newMessage" name="message-input" class="message-input" type="text" >
-      <button id="send_button" v-on:click="sendMessage(newMessage)">✉️</button>
+
+        <div class="input">
+          <input v-model="newMessage" name="message-input" class="message-input" type="text" >
+          <button class="send-button" v-on:click="sendMessage(newMessage)"><div>&#9993;</div></button>
+        </div>
     </div>
 </template>
 
@@ -32,10 +35,14 @@
         timeStamp: string
     };
 
+    type RoomType = {
+        messages: MessageType[]
+    };
+
     type DataType = {
         socket: WebSocket | null,
-        messages: MessageType[]
-        users: UserType[]
+        messages: MessageType[],
+        newMessage: string
     }
   
     export default {
@@ -43,28 +50,29 @@
         data(): DataType {
             return {               
                 socket: null,
-                messages: []
+                messages: [],
+                newMessage: ""
             }        
         },
         created() {
             this.initConnection();
         },
-        
         methods: {
             initConnection: function() {
                 this.socket = new WebSocket("ws://localhost:9000/api/socket/");
 
                 this.socket.onopen = (event: Event) => {
                     console.log('Websocket connected.');
+
+                    this.loadRoom();
                 };
 
                 this.socket.onmessage = (event: MessageEvent) => {
-                    const message: MessageType = JSON.parse(event.data);
+                    const room: RoomType = JSON.parse(event.data);
 
-                    this.messages = [
-                        ...this.messages,
-                        message
-                    ];
+                    this.messages = room.messages.map((message) => {
+                      return JSON.parse(message);
+                    });
                 };
 
                 this.socket.onerror = (err: ErrorEvent) => {
@@ -72,10 +80,17 @@
                 };
 
             },
-            reset(){
+            resetInput(){
                 this.newMessage = ''
             },
+            loadRoom() {
+              this.socket.send("");
+            },
             sendMessage(text: string) {
+                if(!text) {
+                  return;
+                }
+
                 const user = this.currentUser;
                 const timeStamp = new Date().toLocaleString();
                 const message: MessageType = {
@@ -86,7 +101,8 @@
                 };
 
                 this.socket.send(JSON.stringify(message));
-                this.reset();
+
+                this.resetInput();
             },
         },
         computed: {
@@ -96,42 +112,76 @@
 </script>
 
 <style scoped>
+    .Chat {
+      max-width: 300px;
+      margin: auto;
+    }
+
+    .input {
+      width: 100%;
+      height: 30px;
+      margin-top: 5px;
+      display: flex;
+    }
+
     .message-input {
-        width: 100%;
-        max-width: 500px;
-        margin: 10px auto;
-        height: 22px;
+        flex: 1;
         padding: 2px 5px;
         outline: none;
-        font-size: 15px;
+        font-size: 16px;
         border-radius: 0;
         border: 1px solid black;
-        position: absolute;
-        left: 425px;
-        bottom: 0;
     }
-    #send_button{
-        box-sizing: border-box;
-        border-radius: 4px;
-        border: 2px solid purple;
-        transition: 0.5s;
-        font-weight: bold;
-        font-size: larger;
-        position: absolute;
-        right: 370px;
-        bottom:7px;
 
+    .send-button {
+        display: flex;
+        box-sizing: content-box;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        font-size: 20px;
+        line-height: 20px;
+        min-width: 30px;
+        transition: 0.5s;
+        border: 1px solid black;
+        border-left: none;
     }
-    #send_button:hover {
+
+    .send-button:hover {
         background-color: #45a049;
         color: white;
     }
 
-    .messages table {
-      margin-left: auto;
-      margin-right: auto;
-      align-content: center;
-      
+    .message {
+      color: white;
+      margin-bottom: 10px;
     }
 
+    .own-message .message-text {
+      background-color: #4848fd;
+      margin-left: auto;
+    }
+
+    .own-message .message-meta {
+      text-align: right;
+    }
+
+    .message-text {
+      background-color: #646464;
+      border-radius: 5px;
+      width: fit-content;
+      padding: 10px;
+      text-align: left;
+    }
+
+    .message-meta {
+      color: #646464;
+      margin-top: 5px;
+      text-align: left;
+    }
+
+    .sender {
+      margin-right: 5px;
+      font-weight: bold;
+    }
 </style>

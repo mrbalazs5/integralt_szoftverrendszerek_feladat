@@ -21,7 +21,13 @@
                 class="message-text"
                 v-bind:style= "[message.senderId === this.currentUser.id ? {backgroundColor: this.chatColor} : {}]"
             >
-              {{ message.text }}
+              <span v-if="message.text">{{ message.text }}</span>
+
+              <img
+                  v-if="message.file"
+                  v-bind:alt="message.file"
+                  v-bind:src="'http://localhost:9000/api/files/' + message.file"
+              />
             </div>
 
             <div class="message-meta">
@@ -33,21 +39,30 @@
         </div>
 
         <div class="input">
-          <input v-model="newMessage" name="message-input" class="message-input" type="text" >
-          <button class="send-button" v-on:click="sendMessage(newMessage)"><div>&#9993;</div></button>
+          <div class="message-input-wrapper">
+            <input v-model="newMessage" name="message-input" class="message-input" type="text" >
+            <button class="send-button" v-on:click="sendMessage(newMessage)"><div>&#9993;</div></button>
+          </div>
+
+          <label for="send-image" class="image-input-button">
+            <IconSendImage class="send-image-icon" />
+            <input id="send-image" class="image-input" type="file" ref="uploadImage" @change="onImageUpload()">
+          </label>
         </div>
     </div>
 </template>
 
 <script lang="ts">
+    import IconSendImage from './icons/IconSendImage.vue';
     import { mapGetters } from "vuex";
-    import type { UserType } from "@/types";
+    import axios from "axios";
  
     type MessageType = {
         text: string,
         senderId: number,
         senderName: string,
-        timeStamp: string
+        timeStamp: string,
+        file?: string
     };
 
     type RoomType = {
@@ -63,6 +78,9 @@
   
     export default {
         name: "Chat",
+        components: {
+          IconSendImage
+        },
         data(): DataType {
             return {               
                 socket: null,
@@ -83,9 +101,36 @@
             this.initConnection();
         },
         updated() {
-          this.scrollDownMessages();
+          setTimeout(() => this.scrollDownMessages(), 500);
         },
         methods: {
+            scrollDownMessages() {
+              const messages = this.$el.querySelector('.messages');
+
+              messages.scrollTop = messages?.lastElementChild?.offsetTop || 0;
+            },
+            onImageUpload() {
+              const file = this.$refs?.uploadImage?.files?.[0] || null;
+
+              const imageFormData = new FormData();
+              imageFormData.append("file", file);
+
+              axios({
+                url: 'http://localhost:9000/api/upload-image',
+                data: imageFormData,
+                method: 'POST',
+                headers: {
+                  'Accept': 'application/json',
+                  'Content-type': 'multipart/form-data'
+                }
+              }).then(response => {
+                const fileName = response?.data?.fileName;
+
+                this.sendMessage('', fileName);
+              }).catch(e => {
+                console.error(e);
+              });
+            },
             initConnection: function() {
                 this.socket = new WebSocket("ws://localhost:9000/api/socket/");
 
@@ -112,11 +157,6 @@
             resetInput() {
                 this.newMessage = ''
             },
-            scrollDownMessages() {
-              const messages = this.$el.querySelector('.messages');
-
-              messages.scrollTop = messages?.lastElementChild?.offsetTop || 0;
-            },
             loadRoom() {
               this.socket.send("");
             },
@@ -127,8 +167,8 @@
 
               this.socket.send(JSON.stringify(colorData));
             },
-            sendMessage(text: string) {
-                if(!text) {
+            sendMessage(text: string, fileName?: string) {
+                if(!text && !fileName) {
                   return;
                 }
 
@@ -138,7 +178,8 @@
                     text,
                     senderId: user.id,
                     senderName: user.username,
-                    timeStamp: timeStamp
+                    timeStamp: timeStamp,
+                    file: fileName || null
                 };
 
                 this.socket.send(JSON.stringify(message));
@@ -166,7 +207,7 @@
       margin-bottom: 5px;
     }
 
-    .input {
+    .message-input-wrapper {
       width: 100%;
       height: 30px;
       margin-top: 5px;
@@ -201,6 +242,35 @@
         color: white;
     }
 
+    .image-input {
+      display: none;
+    }
+
+    .image-input-button {
+      width: fit-content;
+      margin-top: 10px;
+      border: 1px solid #ccc;
+      padding: 6px 12px;
+      cursor: pointer;
+      transition: 0.5s;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .image-input-button svg {
+      transition: 0.5s;
+    }
+
+    .image-input-button:hover {
+      background-color: #45a049;
+      color: white;
+    }
+
+    .image-input-button:hover svg {
+      fill: white;
+    }
+
     .messages {
       height: 400px;
       overflow-y: auto;
@@ -228,6 +298,10 @@
       width: fit-content;
       padding: 10px;
       text-align: left;
+    }
+
+    .message-text img {
+      width: 100%;
     }
 
     .message-meta {

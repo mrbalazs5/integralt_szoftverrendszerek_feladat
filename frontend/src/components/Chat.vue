@@ -1,5 +1,15 @@
 <template>
     <div class="Chat">
+        <select
+            class="color-selector" v-model="chatColor"
+            v-bind:style= "{backgroundColor: this.chatColor}"
+            v-on:change="changeChatColor(chatColor)"
+        >
+          <option
+              v-for="(color, k) in this.availableColors" :key="k" :value="color"
+              v-bind:style= "{backgroundColor: color}"
+          ></option>
+        </select>
         <div class="messages">
           <div
               class="message"
@@ -7,7 +17,12 @@
               v-for="(message, k) in this.messages"
               :key="k"
           >
-            <div class="message-text">{{ message.text }}</div>
+            <div
+                class="message-text"
+                v-bind:style= "[message.senderId === this.currentUser.id ? {backgroundColor: this.chatColor} : {}]"
+            >
+              {{ message.text }}
+            </div>
 
             <div class="message-meta">
               <span class="sender">{{ message.senderName }}</span>
@@ -36,7 +51,8 @@
     };
 
     type RoomType = {
-        messages: MessageType[]
+        messages: MessageType[],
+        color: string
     };
 
     type DataType = {
@@ -51,11 +67,23 @@
             return {               
                 socket: null,
                 messages: [],
-                newMessage: ""
+                newMessage: "",
+                chatColor: '#4848fd',
+                availableColors: [
+                  '#4848fd',
+                  '#088522',
+                  '#da5812',
+                  '#be2828',
+                  '#8300b0',
+                  '#06c9c4'
+                ]
             }        
         },
         created() {
             this.initConnection();
+        },
+        updated() {
+          this.scrollDownMessages();
         },
         methods: {
             initConnection: function() {
@@ -70,6 +98,7 @@
                 this.socket.onmessage = (event: MessageEvent) => {
                     const room: RoomType = JSON.parse(event.data);
 
+                    this.chatColor = room.color;
                     this.messages = room.messages.map((message) => {
                       return JSON.parse(message);
                     });
@@ -80,11 +109,23 @@
                 };
 
             },
-            resetInput(){
+            resetInput() {
                 this.newMessage = ''
+            },
+            scrollDownMessages() {
+              const messages = this.$el.querySelector('.messages');
+
+              messages.scrollTop = messages?.lastElementChild?.offsetTop || 0;
             },
             loadRoom() {
               this.socket.send("");
+            },
+            changeChatColor(color: string) {
+              const colorData = {
+                chatColor: color
+              };
+
+              this.socket.send(JSON.stringify(colorData));
             },
             sendMessage(text: string) {
                 if(!text) {
@@ -113,8 +154,16 @@
 
 <style scoped>
     .Chat {
-      max-width: 300px;
+      max-width: 400px;
       margin: auto;
+    }
+
+    .color-selector {
+      margin-left: auto;
+      display: block;
+      border-radius: 50px;
+      width: 50px;
+      margin-bottom: 5px;
     }
 
     .input {
@@ -155,6 +204,9 @@
     .messages {
       height: 400px;
       overflow-y: auto;
+      scroll-behavior: smooth;
+      border: 1px solid #a4a4a4;
+      padding: 10px;
     }
 
     .message {
@@ -163,7 +215,6 @@
     }
 
     .own-message .message-text {
-      background-color: #4848fd;
       margin-left: auto;
     }
 
